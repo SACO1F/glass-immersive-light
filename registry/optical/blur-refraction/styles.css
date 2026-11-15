@@ -1,0 +1,210 @@
+.il-blur-refraction {
+  --il-glass-radius: 26px;
+  --il-glass-padding: 24px;
+  --il-glass-blur-raw: 16px;
+  --il-glass-blur: min(
+    var(--il-glass-blur-raw),
+    var(--il-tier-blur-max, 16px)
+  );
+  --il-glass-tint: rgb(255 255 255 / 0.08);
+  --il-glass-surface: var(--il-surface, #0d1218);
+  --il-glass-text: var(--il-text, #f2f7fb);
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-glass-radius);
+  color: var(--il-glass-text);
+}
+
+.il-blur-refraction__surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: var(--il-glass-surface);
+  background-image: linear-gradient(
+    var(--il-glass-tint),
+    var(--il-glass-tint)
+  );
+  -webkit-backdrop-filter: blur(var(--il-glass-blur)) saturate(1.45);
+  backdrop-filter: blur(var(--il-glass-blur)) saturate(1.45);
+  box-shadow:
+    inset 0 -1px 0 rgb(0 0 0 / 0.22),
+    0 24px 70px rgb(0 0 0 / 0.3);
+}
+
+.il-blur-refraction__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.16 *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 70%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+}
+
+.il-blur-refraction__rim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    180px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.9 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 62%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.il-blur-refraction__content {
+  position: relative;
+  z-index: 2;
+  padding: var(--il-glass-padding);
+}
+
+[data-theme="light"] .il-blur-refraction__surface {
+  box-shadow:
+    inset 0 -1px 0 rgb(0 0 0 / 0.12),
+    0 24px 70px rgb(15 23 42 / 0.14);
+}
+
+.il-blur-refraction--clear {
+  --il-glass-tint: rgb(255 255 255 / 0.04);
+}
+
+.il-blur-refraction--frosted {
+  --il-glass-tint: rgb(255 255 255 / 0.08);
+}
+
+.il-blur-refraction--tinted {
+  --il-glass-tint: rgb(76 194 255 / 0.1);
+}
+
+[data-theme="light"] .il-blur-refraction__ambient {
+  mix-blend-mode: normal;
+}
+
+[data-theme="light"] .il-blur-refraction--clear {
+  --il-glass-tint: rgb(8 126 164 / 0.02);
+}
+
+[data-theme="light"] .il-blur-refraction--frosted {
+  --il-glass-tint: rgb(8 126 164 / 0.05);
+}
+
+[data-theme="light"] .il-blur-refraction--tinted {
+  --il-glass-tint: rgb(8 126 164 / 0.08);
+}
+
+.il-blur-refraction[data-il-tier="low"] .il-blur-refraction__surface,
+[data-tier="low"] .il-blur-refraction:not([data-il-tier]) .il-blur-refraction__surface {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--il-glass-surface);
+}
+
+.il-blur-refraction[data-il-tier="low"] .il-blur-refraction__ambient,
+[data-tier="low"] .il-blur-refraction:not([data-il-tier]) .il-blur-refraction__ambient {
+  display: none;
+}
+
+.il-blur-refraction[data-il-tier="low"] .il-blur-refraction__rim,
+[data-tier="low"] .il-blur-refraction:not([data-il-tier]) .il-blur-refraction__rim {
+  background: none;
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .il-blur-refraction__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-glass-surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .il-blur-refraction__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-glass-surface);
+  }
+
+  .il-blur-refraction__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-blur-refraction__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-blur-refraction__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-glass-surface);
+  }
+
+  .il-blur-refraction__ambient {
+    display: none;
+  }
+
+  .il-blur-refraction__rim {
+    background: rgb(255 255 255 / 0.7);
+  }
+
+  [data-theme="light"] .il-blur-refraction__rim {
+    background: rgb(8 126 164 / 0.8);
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-blur-refraction[data-il-tier="high"] {
+  --il-tier-blur-max: 20px;
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-blur-refraction[data-il-tier="mid"] {
+  --il-tier-blur-max: 10px;
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-blur-refraction[data-il-tier="low"] {
+  --il-tier-blur-max: 0px;
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

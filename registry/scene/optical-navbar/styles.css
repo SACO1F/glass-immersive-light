@@ -1,0 +1,225 @@
+.il-optical-navbar {
+  --il-navbar-radius: 20px;
+  --il-navbar-blur-raw: 16px;
+  --il-navbar-blur: min(
+    var(--il-navbar-blur-raw),
+    var(--il-tier-blur-max, 16px)
+  );
+  --il-navbar-tint: rgb(255 255 255 / 0.06);
+  --il-navbar-surface: var(--il-surface, #0d1218);
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-navbar-radius);
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-optical-navbar--sticky {
+  position: sticky;
+  top: 16px;
+  z-index: 20;
+}
+
+.il-optical-navbar__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: color-mix(
+    in oklab,
+    var(--il-navbar-surface) 58%,
+    transparent
+  );
+  background-image: linear-gradient(
+    var(--il-navbar-tint),
+    var(--il-navbar-tint)
+  );
+  -webkit-backdrop-filter: blur(var(--il-navbar-blur)) saturate(1.5);
+  backdrop-filter: blur(var(--il-navbar-blur)) saturate(1.5);
+  box-shadow:
+    inset 0 -1px 0 rgb(0 0 0 / 0.2),
+    0 18px 50px rgb(0 0 0 / 0.28);
+}
+
+.il-optical-navbar__ambient {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.2 *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+}
+
+.il-optical-navbar__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    150px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.95 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 66%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+[data-theme="light"] .il-optical-navbar {
+  --il-navbar-tint: rgb(8 126 164 / 0.03);
+}
+
+[data-theme="light"] .il-optical-navbar__ambient {
+  mix-blend-mode: normal;
+}
+
+[data-theme="light"] .il-optical-navbar__glass {
+  box-shadow:
+    inset 0 -1px 0 rgb(0 0 0 / 0.08),
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 18px 50px rgb(15 23 42 / 0.12);
+}
+
+.il-optical-navbar__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 8px 10px 8px 16px;
+}
+
+.il-optical-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.il-optical-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+}
+
+.il-optical-navbar__links :where(a, button) {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  padding: 8px 12px;
+  color: color-mix(in oklab, var(--il-text, #f2f7fb) 68%, transparent);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.il-optical-navbar__links :where(a, button):hover,
+.il-optical-navbar__links :where(a, button):focus-visible {
+  background: color-mix(
+    in oklab,
+    var(--il-text, #f2f7fb) 8%,
+    transparent
+  );
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-optical-navbar[data-il-tier="low"] .il-optical-navbar__glass,
+[data-tier="low"] .il-optical-navbar:not([data-il-tier]) .il-optical-navbar__glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--il-navbar-surface);
+}
+
+.il-optical-navbar[data-il-tier="low"] .il-optical-navbar__ambient,
+[data-tier="low"] .il-optical-navbar:not([data-il-tier]) .il-optical-navbar__ambient {
+  display: none;
+}
+
+.il-optical-navbar[data-il-tier="low"] .il-optical-navbar__rim,
+[data-tier="low"] .il-optical-navbar:not([data-il-tier]) .il-optical-navbar__rim {
+  background: none;
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .il-optical-navbar__glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-navbar-surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .il-optical-navbar__glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-navbar-surface);
+  }
+
+  .il-optical-navbar__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-optical-navbar__ambient {
+    display: none;
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-optical-navbar[data-il-tier="high"] {
+  --il-tier-blur-max: 20px;
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-optical-navbar[data-il-tier="mid"] {
+  --il-tier-blur-max: 10px;
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-optical-navbar[data-il-tier="low"] {
+  --il-tier-blur-max: 0px;
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

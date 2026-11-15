@@ -1,0 +1,143 @@
+.il-liquid-pool {
+  --il-pool-radius: 28px;
+  --il-pool-a: #6fe7ff;
+  --il-pool-b: #ff6f9c;
+  --il-pool-surface: var(--il-surface, #081018);
+  --il-pool-pointer-x: 0;
+  --il-pool-pointer-y: 0;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 360px;
+  border-radius: var(--il-pool-radius);
+  background: var(--il-pool-surface);
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-liquid-pool__surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      62% 62% at 50% 38%,
+      rgb(255 255 255 / 0.045),
+      transparent 72%
+    ),
+    var(--il-pool-surface);
+}
+
+.il-liquid-pool__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.il-liquid-pool__canvas:active {
+  cursor: grabbing;
+}
+
+.il-liquid-pool__fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(
+    calc(var(--il-pool-pointer-x) * 16px),
+    calc(var(--il-pool-pointer-y) * 12px),
+    0
+  );
+  transition: transform 260ms var(--il-ease-out, ease-out);
+}
+
+.il-liquid-pool__blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: 0.56;
+  mix-blend-mode: screen;
+  animation: il-pool-float 12s ease-in-out infinite alternate;
+}
+
+.il-liquid-pool__blob--a {
+  top: 8%;
+  left: 6%;
+  width: 58%;
+  aspect-ratio: 1;
+}
+
+.il-liquid-pool__blob--b {
+  right: 2%;
+  bottom: 4%;
+  width: 52%;
+  aspect-ratio: 1;
+  animation-duration: 16s;
+  animation-delay: -4s;
+}
+
+.il-liquid-pool__blob--c {
+  top: 34%;
+  left: 36%;
+  width: 38%;
+  aspect-ratio: 1;
+  animation-duration: 10s;
+  animation-delay: -2s;
+  opacity: 0.42;
+}
+
+.il-liquid-pool__content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  pointer-events: none;
+}
+
+[data-theme="light"] .il-liquid-pool__blob {
+  mix-blend-mode: normal;
+  opacity: 0.34;
+}
+
+.il-liquid-pool[data-il-tier="low"] .il-liquid-pool__blob {
+  animation: none;
+}
+
+.il-liquid-pool[data-il-tier="low"] .il-liquid-pool__fallback,
+[data-tier="low"] .il-liquid-pool[data-il-tier="low"] .il-liquid-pool__fallback {
+  transform: none;
+  transition: none;
+}
+
+@keyframes il-pool-float {
+  0% {
+    transform: translate3d(-4%, -2%, 0) scale(0.96);
+  }
+  50% {
+    transform: translate3d(3%, 4%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(7%, -3%, 0) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-liquid-pool__blob {
+    animation: none;
+  }
+
+  .il-liquid-pool__fallback {
+    transform: none;
+    transition: none;
+  }
+}

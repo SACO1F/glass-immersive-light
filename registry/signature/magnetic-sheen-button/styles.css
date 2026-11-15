@@ -1,0 +1,178 @@
+.il-magnetic-button {
+  --il-button-intensity: 0.8;
+  --il-magnetic-radius: 999px;
+  --il-magnet-x: 0px;
+  --il-magnet-y: 0px;
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--il-magnetic-radius);
+  background: linear-gradient(135deg, #101b26, #0b6e9c);
+  color: #f7fcff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transform: translate(var(--il-magnet-x), var(--il-magnet-y));
+  transition:
+    transform 220ms var(--il-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    box-shadow 180ms ease;
+  box-shadow:
+    0 14px 36px rgb(0 0 0 / 0.28),
+    0 0 26px rgb(76 194 255 / 0.14);
+}
+
+.il-magnetic-button:hover {
+  box-shadow:
+    0 18px 44px rgb(0 0 0 / 0.32),
+    0 0 34px rgb(76 194 255 / 0.2);
+}
+
+.il-magnetic-button:focus-visible {
+  outline: 2px solid var(--il-accent, #8fd8ff);
+  outline-offset: 4px;
+}
+
+.il-magnetic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.il-magnetic-button__layers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.il-magnetic-button__ambient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    200px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.26 * var(--il-button-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+}
+
+.il-magnetic-button__specular {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    110px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.22 *
+            var(--il-specular-alpha-scale, 1)
+        )
+    ),
+    transparent 62%
+  );
+  mix-blend-mode: plus-lighter;
+}
+
+.il-magnetic-button__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    140px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.95 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 66%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.il-magnetic-button__label {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .il-magnetic-button__ambient,
+[data-theme="light"] .il-magnetic-button__specular {
+  mix-blend-mode: normal;
+}
+
+.il-magnetic-button[data-il-tier="low"] {
+  transform: none;
+}
+
+.il-magnetic-button[data-il-tier="low"] .il-magnetic-button__ambient,
+[data-tier="low"] .il-magnetic-button:not([data-il-tier]) .il-magnetic-button__ambient,
+.il-magnetic-button[data-il-tier="low"] .il-magnetic-button__specular,
+[data-tier="low"] .il-magnetic-button:not([data-il-tier]) .il-magnetic-button__specular,
+.il-magnetic-button[data-il-tier="low"] .il-magnetic-button__rim,
+[data-tier="low"] .il-magnetic-button:not([data-il-tier]) .il-magnetic-button__rim {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-magnetic-button {
+    transform: none;
+    transition: none;
+  }
+
+  .il-magnetic-button__ambient,
+  .il-magnetic-button__specular {
+    display: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .il-magnetic-button {
+    transform: none;
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-magnetic-button[data-il-tier="high"] {
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-magnetic-button[data-il-tier="mid"] {
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-magnetic-button[data-il-tier="low"] {
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

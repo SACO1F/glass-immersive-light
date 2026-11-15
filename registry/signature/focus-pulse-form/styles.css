@@ -1,0 +1,144 @@
+.il-focus-pulse-form {
+  --il-form-radius: 26px;
+  --il-form-padding: 26px;
+  --il-form-surface: var(--il-surface, #0d1218);
+  --il-form-intensity: 0.8;
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-form-radius);
+  background: var(--il-form-surface);
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-focus-pulse-form__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.18 * var(--il-form-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.il-focus-pulse-form__fields {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+  padding: var(--il-form-padding);
+}
+
+.il-focus-pulse-form__fields :where(label) {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--il-text-muted, #9aa9b7);
+}
+
+.il-focus-pulse-form__fields :where(input, textarea, select) {
+  width: 100%;
+  border: 1px solid var(--il-glass-border, rgb(255 255 255 / 0.14));
+  border-radius: 12px;
+  background: var(--il-glass-fill, rgb(255 255 255 / 0.06));
+  padding: 11px 13px;
+  color: var(--il-text, #f2f7fb);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.il-focus-pulse-form__fields :where(input, textarea, select)::placeholder {
+  color: var(--il-text-subtle, #64717e);
+}
+
+.il-focus-pulse-form__fields :where(input, textarea, select):focus-visible {
+  border-color: var(--il-accent, #8fd8ff);
+  box-shadow:
+    0 0 0 1px var(--il-accent, #8fd8ff),
+    0 0 24px color-mix(in oklab, var(--il-accent, #8fd8ff) 28%, transparent);
+  animation: il-focus-pulse 700ms var(--il-ease-out, ease-out);
+}
+
+@keyframes il-focus-pulse {
+  0% {
+    box-shadow:
+      0 0 0 1px var(--il-accent, #8fd8ff),
+      0 0 0 0 transparent;
+  }
+  55% {
+    box-shadow:
+      0 0 0 1px var(--il-accent, #8fd8ff),
+      0 0 0 7px color-mix(in oklab, var(--il-accent, #8fd8ff) 16%, transparent);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1px var(--il-accent, #8fd8ff),
+      0 0 24px color-mix(in oklab, var(--il-accent, #8fd8ff) 28%, transparent);
+  }
+}
+
+[data-theme="light"] .il-focus-pulse-form__ambient {
+  mix-blend-mode: normal;
+}
+
+.il-focus-pulse-form[data-il-tier="low"] .il-focus-pulse-form__ambient,
+[data-tier="low"] .il-focus-pulse-form:not([data-il-tier]) .il-focus-pulse-form__ambient {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-focus-pulse-form__fields :where(input, textarea, select):focus-visible {
+    animation: none;
+  }
+
+  .il-focus-pulse-form__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-focus-pulse-form__ambient {
+    display: none;
+  }
+
+  .il-focus-pulse-form__fields :where(input, textarea, select) {
+    border-color: var(--il-text, #f2f7fb);
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-focus-pulse-form[data-il-tier="high"] {
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-focus-pulse-form[data-il-tier="mid"] {
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-focus-pulse-form[data-il-tier="low"] {
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

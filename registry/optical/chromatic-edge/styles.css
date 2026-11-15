@@ -1,0 +1,107 @@
+.il-chromatic-edge {
+  --il-chromatic-radius: 26px;
+  --il-chromatic-intensity: 0.85;
+  --il-chromatic-padding: 28px;
+  --il-chromatic-surface: var(--il-surface, #0d1218);
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-chromatic-radius);
+  background: var(--il-chromatic-surface);
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-chromatic-edge__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: var(--il-light-proximity);
+  transition: opacity 180ms var(--il-ease-out, ease-out);
+  pointer-events: none;
+}
+
+.il-chromatic-edge__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.il-chromatic-edge__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.16 *
+            var(--il-chromatic-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.il-chromatic-edge__content {
+  position: relative;
+  z-index: 1;
+  padding: var(--il-chromatic-padding);
+}
+
+[data-theme="light"] .il-chromatic-edge__glow {
+  mix-blend-mode: normal;
+}
+
+.il-chromatic-edge[data-il-tier="low"] .il-chromatic-edge__frame,
+[data-tier="low"] .il-chromatic-edge:not([data-il-tier]) .il-chromatic-edge__frame,
+.il-chromatic-edge[data-il-tier="low"] .il-chromatic-edge__glow,
+[data-tier="low"] .il-chromatic-edge:not([data-il-tier]) .il-chromatic-edge__glow {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-chromatic-edge__frame {
+    transition: none;
+  }
+
+  .il-chromatic-edge__glow {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-chromatic-edge__glow {
+    display: none;
+  }
+
+  .il-chromatic-edge__frame {
+    opacity: 1;
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-chromatic-edge[data-il-tier="high"] {
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-chromatic-edge[data-il-tier="mid"] {
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-chromatic-edge[data-il-tier="low"] {
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

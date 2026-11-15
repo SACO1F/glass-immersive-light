@@ -1,0 +1,184 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/site.css";
+@import "../styles/pages.css";
+
+@theme inline {
+  --color-background: var(--site-bg);
+  --color-foreground: var(--site-text);
+  --color-surface: var(--site-panel);
+  --color-surface-strong: var(--site-panel-2);
+  --color-muted: var(--site-muted);
+  --color-subtle: var(--site-subtle);
+  --color-accent: var(--site-accent);
+  --color-line: var(--site-line);
+  --font-sans: var(--font-body);
+}
+
+@layer base {
+  html {
+    background: var(--site-bg);
+    color: var(--site-text);
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  .site-main {
+    flex: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+.font-mono,
+code,
+pre,
+kbd {
+  font-family: var(--font-mono), var(--il-font-mono);
+}
+
+/*
+ * Compatibility surface for component demos. Registry source stays
+ * Tailwind-free and self-contained; these helpers are site chrome only.
+ */
+.il-ambient {
+  background:
+    radial-gradient(
+      70% 50% at 50% -10%,
+      color-mix(in oklab, var(--site-accent) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      35% 35% at 88% 8%,
+      color-mix(in oklab, var(--site-warm) 8%, transparent),
+      transparent 70%
+    ),
+    var(--site-bg);
+}
+
+[data-theme="light"] .il-ambient {
+  background:
+    radial-gradient(
+      70% 50% at 50% -10%,
+      color-mix(in oklab, var(--site-accent) 8%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      35% 35% at 88% 8%,
+      color-mix(in oklab, var(--site-warm) 5%, transparent),
+      transparent 70%
+    ),
+    var(--site-bg);
+}
+
+.il-checker {
+  background-color: #0b1117;
+  background-image:
+    linear-gradient(45deg, rgb(255 255 255 / 0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgb(255 255 255 / 0.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgb(255 255 255 / 0.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgb(255 255 255 / 0.06) 75%);
+  background-size: 24px 24px;
+  background-position:
+    0 0,
+    0 12px,
+    12px -12px,
+    -12px 0;
+}
+
+[data-theme="light"] .il-checker {
+  background-color: #e8eef4;
+  background-image:
+    linear-gradient(45deg, rgb(15 23 42 / 0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgb(15 23 42 / 0.06) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgb(15 23 42 / 0.06) 75%),
+    linear-gradient(-45deg, transparent 75%, rgb(15 23 42 / 0.06) 75%);
+  background-size: 24px 24px;
+  background-position:
+    0 0,
+    0 12px,
+    12px -12px,
+    -12px 0;
+}
+
+.il-code pre {
+  margin: 0;
+  padding: 1.25rem;
+  background: transparent !important;
+  font-family: var(--font-mono), var(--il-font-mono);
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+
+.il-code code {
+  font-family: inherit;
+}
+
+.il-preview-label {
+  color: rgb(255 255 255 / 0.4);
+}
+
+.il-preview-label[data-bg="light"] {
+  color: rgb(10 22 32 / 0.42);
+}
+
+[data-theme="light"] .il-preview-label[data-bg="checker"] {
+  color: rgb(15 23 42 / 0.42);
+}
+
+/* Global pointer light. */
+.pointer-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 620px;
+  height: 620px;
+  margin: -310px 0 0 -310px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--site-accent) 16%, transparent),
+    color-mix(in oklab, var(--site-accent-2) 7%, transparent) 46%,
+    transparent 78%
+  );
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 420ms var(--site-ease);
+}
+
+.pointer-spotlight[data-active="true"] {
+  opacity: 0.75;
+}
+
+[data-theme="light"] .pointer-spotlight {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--site-accent) 11%, transparent),
+    color-mix(in oklab, var(--site-accent-2) 5%, transparent) 48%,
+    transparent 76%
+  );
+}
+
+[data-theme="light"] .pointer-spotlight[data-active="true"] {
+  opacity: 0.7;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .pointer-spotlight {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pointer-spotlight {
+    display: none;
+  }
+}

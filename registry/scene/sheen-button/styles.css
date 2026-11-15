@@ -1,0 +1,278 @@
+.il-sheen-button {
+  --il-button-intensity: 0.7;
+  --il-button-radius: 999px;
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--il-button-radius);
+  font: inherit;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 180ms var(--il-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.il-sheen-button:hover {
+  transform: translateY(-1px);
+}
+
+.il-sheen-button:active {
+  transform: translateY(0);
+}
+
+.il-sheen-button:focus-visible {
+  outline: 2px solid var(--il-accent, #8fd8ff);
+  outline-offset: 3px;
+}
+
+.il-sheen-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.il-sheen-button--sm {
+  min-height: 36px;
+  padding: 0 16px;
+  font-size: 12px;
+}
+
+.il-sheen-button--md {
+  min-height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.il-sheen-button--lg {
+  min-height: 52px;
+  padding: 0 24px;
+  font-size: 15px;
+}
+
+.il-sheen-button--solid {
+  background: linear-gradient(135deg, #3db8f0, #0b6e9c);
+  color: #f7fcff;
+  box-shadow: 0 12px 32px rgb(76 194 255 / 0.24);
+}
+
+.il-sheen-button--glass {
+  background: transparent;
+  color: var(--il-text, #f2f7fb);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.18);
+}
+
+.il-sheen-button__layers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.il-sheen-button--glass .il-sheen-button__layers {
+  background: color-mix(
+    in oklab,
+    var(--il-surface, #0d1218) 55%,
+    transparent
+  );
+  -webkit-backdrop-filter: blur(
+    min(12px, var(--il-tier-blur-max, 12px))
+  ) saturate(1.4);
+  backdrop-filter: blur(min(12px, var(--il-tier-blur-max, 12px)))
+    saturate(1.4);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.2);
+}
+
+.il-sheen-button__ambient {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    160px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.26 * var(--il-button-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: plus-lighter;
+}
+
+.il-sheen-button__sheen {
+  position: absolute;
+  inset: -40% -20%;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(255 255 255 / 0.32) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%) rotate(8deg);
+  transition: transform 650ms var(--il-ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .il-sheen-button:hover .il-sheen-button__sheen {
+    transform: translateX(120%) rotate(8deg);
+  }
+}
+
+.il-sheen-button__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    110px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.95 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 68%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.il-sheen-button__label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .il-sheen-button__ambient {
+  mix-blend-mode: normal;
+}
+
+[data-theme="light"] .il-sheen-button--glass {
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 12px 32px rgb(15 23 42 / 0.12);
+}
+
+[data-theme="light"] .il-sheen-button--glass .il-sheen-button__layers {
+  background-image: linear-gradient(
+    rgb(8 126 164 / 0.04),
+    rgb(8 126 164 / 0.04)
+  );
+}
+
+[data-theme="light"] .il-sheen-button--glass .il-sheen-button__sheen {
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(8 126 164 / 0.12) 50%,
+    transparent 62%
+  );
+}
+
+.il-sheen-button[data-il-tier="low"] .il-sheen-button__ambient,
+[data-tier="low"] .il-sheen-button:not([data-il-tier]) .il-sheen-button__ambient,
+.il-sheen-button[data-il-tier="low"] .il-sheen-button__sheen,
+[data-tier="low"] .il-sheen-button:not([data-il-tier]) .il-sheen-button__sheen {
+  display: none;
+}
+
+.il-sheen-button[data-il-tier="low"] .il-sheen-button__rim,
+[data-tier="low"] .il-sheen-button:not([data-il-tier]) .il-sheen-button__rim {
+  background: none;
+}
+
+.il-sheen-button[data-il-tier="low"].il-sheen-button--glass,
+[data-tier="low"] .il-sheen-button:not([data-il-tier]).il-sheen-button--glass {
+  background: var(--il-surface, #0d1218);
+}
+
+.il-sheen-button[data-il-tier="low"].il-sheen-button--glass .il-sheen-button__layers,
+[data-tier="low"] .il-sheen-button:not([data-il-tier]).il-sheen-button--glass .il-sheen-button__layers {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .il-sheen-button--glass .il-sheen-button__layers {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-surface, #0d1218);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .il-sheen-button--glass .il-sheen-button__layers {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-surface, #0d1218);
+  }
+
+  .il-sheen-button__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-sheen-button {
+    transition: none;
+  }
+
+  .il-sheen-button:hover {
+    transform: none;
+  }
+
+  .il-sheen-button__sheen {
+    display: none;
+  }
+
+  .il-sheen-button__ambient {
+    display: none;
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-sheen-button[data-il-tier="high"] {
+  --il-tier-blur-max: 20px;
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-sheen-button[data-il-tier="mid"] {
+  --il-tier-blur-max: 10px;
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-sheen-button[data-il-tier="low"] {
+  --il-tier-blur-max: 0px;
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

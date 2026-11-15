@@ -1,0 +1,299 @@
+.il-refractive-card {
+  --il-card-radius: 26px;
+  --il-card-padding: 24px;
+  --il-card-intensity: 0.6;
+  --il-card-blur-raw: 14px;
+  --il-card-blur: min(
+    var(--il-card-blur-raw),
+    var(--il-tier-blur-max, 14px)
+  );
+  --il-card-tint: rgb(255 255 255 / 0.08);
+  --il-card-shadow: rgb(0 0 0 / 0.35);
+  --il-card-surface: var(--il-surface, #0d1218);
+  --il-card-text: var(--il-text, #f2f7fb);
+  --il-card-rx: 0deg;
+  --il-card-ry: 0deg;
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-card-radius);
+  color: var(--il-card-text);
+  transform: perspective(1000px) rotateX(var(--il-card-rx))
+    rotateY(var(--il-card-ry));
+  transition: transform 180ms var(--il-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  will-change: auto;
+}
+
+.il-refractive-card:hover {
+  will-change: transform;
+}
+
+[data-theme="light"] .il-refractive-card {
+  --il-card-tint: rgb(15 23 42 / 0.03);
+  --il-card-shadow: rgb(15 23 42 / 0.16);
+}
+
+[data-theme="light"] .il-refractive-card__ambient,
+[data-theme="light"] .il-refractive-card__specular {
+  mix-blend-mode: normal;
+}
+
+.il-refractive-card__surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  background-color: var(--il-card-surface);
+  background-image: linear-gradient(
+    var(--il-card-tint),
+    var(--il-card-tint)
+  );
+  -webkit-backdrop-filter: blur(var(--il-card-blur)) saturate(1.45);
+  backdrop-filter: blur(var(--il-card-blur)) saturate(1.45);
+  box-shadow:
+    inset 0 -1px 0 rgb(0 0 0 / 0.24),
+    0 24px 70px var(--il-card-shadow);
+}
+
+@supports (color: color-mix(in oklab, white, black)) {
+  .il-refractive-card__surface {
+    background-color: color-mix(
+      in oklab,
+      var(--il-card-surface) 65%,
+      transparent
+    );
+    background-image: linear-gradient(
+      var(--il-card-tint),
+      var(--il-card-tint)
+    );
+  }
+}
+
+.il-refractive-card__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.16 * var(--il-card-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 70%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.il-refractive-card__rim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    180px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * 0.9 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 62%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.il-refractive-card__specular {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-card-intensity) * 0.45 *
+            var(--il-specular-alpha-scale, 1)
+        )
+    ),
+    transparent 58%
+  );
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+  transition: opacity 180ms var(--il-ease-out, ease-out);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .il-refractive-card:hover .il-refractive-card__specular {
+    opacity: 1;
+  }
+}
+
+.il-refractive-card:focus-within .il-refractive-card__specular {
+  opacity: 0.75;
+}
+
+.il-refractive-card__content {
+  position: relative;
+  z-index: 3;
+  padding: var(--il-card-padding);
+}
+
+.il-refractive-card--clear {
+  --il-card-tint: rgb(255 255 255 / 0.04);
+}
+
+.il-refractive-card--frosted {
+  --il-card-tint: rgb(255 255 255 / 0.08);
+}
+
+.il-refractive-card--tinted {
+  --il-card-tint: rgb(76 194 255 / 0.1);
+}
+
+/*
+ * Light mode needs its own variant scale. Without these rules the
+ * [data-theme="light"] root tint (0.03) wins on specificity and every
+ * variant renders the same material.
+ */
+[data-theme="light"] .il-refractive-card--clear {
+  --il-card-tint: rgb(8 126 164 / 0.015);
+}
+
+[data-theme="light"] .il-refractive-card--frosted {
+  --il-card-tint: rgb(8 126 164 / 0.05);
+}
+
+[data-theme="light"] .il-refractive-card--tinted {
+  --il-card-tint: rgb(0 95 122 / 0.14);
+}
+
+/*
+ * Local tier overrides make the component portable: it works with the site
+ * TierProvider, a local data-tier wrapper, or no tier context at all.
+ */
+.il-refractive-card[data-il-tier="high"] {
+  --il-tier-blur-max: 20px;
+  --il-tier-glow-alpha: 1;
+}
+
+.il-refractive-card[data-il-tier="mid"] {
+  --il-tier-blur-max: 10px;
+  --il-tier-glow-alpha: 0.7;
+}
+
+.il-refractive-card[data-il-tier="low"] {
+  --il-tier-blur-max: 0px;
+  --il-tier-glow-alpha: 0.35;
+}
+
+.il-refractive-card[data-il-tier="low"],
+[data-tier="low"] .il-refractive-card:not([data-il-tier]) {
+  transform: none;
+}
+
+.il-refractive-card[data-il-tier="low"] .il-refractive-card__surface,
+[data-tier="low"] .il-refractive-card:not([data-il-tier]) .il-refractive-card__surface {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--il-card-surface);
+  box-shadow: 0 18px 50px var(--il-card-shadow);
+}
+
+.il-refractive-card[data-il-tier="low"] .il-refractive-card__ambient,
+[data-tier="low"] .il-refractive-card:not([data-il-tier]) .il-refractive-card__ambient,
+.il-refractive-card[data-il-tier="low"] .il-refractive-card__specular,
+[data-tier="low"] .il-refractive-card:not([data-il-tier]) .il-refractive-card__specular {
+  display: none;
+}
+
+.il-refractive-card[data-il-tier="low"] .il-refractive-card__rim,
+[data-tier="low"] .il-refractive-card:not([data-il-tier]) .il-refractive-card__rim {
+  background: none;
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .il-refractive-card__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .il-refractive-card__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+  }
+
+  .il-refractive-card__ambient {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-refractive-card {
+    transform: none;
+    transition: none;
+  }
+
+  .il-refractive-card__specular {
+    opacity: 0;
+    transition: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .il-refractive-card {
+    transform: none;
+  }
+
+  .il-refractive-card__specular {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-refractive-card__surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+  }
+
+  .il-refractive-card__ambient {
+    display: none;
+  }
+
+  .il-refractive-card__rim {
+    background: rgb(255 255 255 / 0.7);
+  }
+
+  [data-theme="light"] .il-refractive-card__rim {
+    background: rgb(8 126 164 / 0.8);
+  }
+}

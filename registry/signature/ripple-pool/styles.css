@@ -1,0 +1,165 @@
+.il-ripple-pool {
+  --il-ripple-radius: 28px;
+  --il-ripple-intensity: 0.8;
+  --il-pool-color: var(--il-accent, #8fd8ff);
+  --il-pool-surface: var(--il-surface, #081018);
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 340px;
+  border-radius: var(--il-ripple-radius);
+  background: var(--il-pool-surface);
+  color: var(--il-text, #f2f7fb);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.il-ripple-pool:focus-visible {
+  outline: 2px solid var(--il-accent, #8fd8ff);
+  outline-offset: 3px;
+}
+
+.il-ripple-pool__surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      60% 55% at 50% 42%,
+      color-mix(
+        in oklab,
+        var(--il-pool-color) calc(var(--il-ripple-intensity) * 18%),
+        transparent
+      ),
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 40% at 78% 78%,
+      color-mix(in oklab, var(--il-pool-color) 8%, transparent),
+      transparent 70%
+    ),
+    var(--il-pool-surface);
+}
+
+.il-ripple-pool__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    320px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.2 * var(--il-ripple-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 72%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.il-ripple-pool__ripples {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.il-ripple-pool__ripple {
+  position: absolute;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--il-pool-color);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--il-pool-color) 35%, transparent),
+    0 0 24px color-mix(in oklab, var(--il-pool-color) 45%, transparent);
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: il-ripple-expand 900ms var(--il-ease-out, ease-out) forwards;
+}
+
+.il-ripple-pool__content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  pointer-events: none;
+}
+
+[data-theme="light"] .il-ripple-pool__ambient {
+  mix-blend-mode: normal;
+}
+
+.il-ripple-pool[data-il-tier="low"] .il-ripple-pool__ambient,
+[data-tier="low"] .il-ripple-pool:not([data-il-tier]) .il-ripple-pool__ambient {
+  display: none;
+}
+
+.il-ripple-pool[data-il-tier="low"] .il-ripple-pool__ripple,
+[data-tier="low"] .il-ripple-pool:not([data-il-tier]) .il-ripple-pool__ripple {
+  animation-duration: 640ms;
+}
+
+@keyframes il-ripple-expand {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(13);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-ripple-pool__ambient {
+    display: none;
+  }
+
+  .il-ripple-pool__ripple {
+    animation: none;
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(6);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-ripple-pool__ambient {
+    display: none;
+  }
+
+  .il-ripple-pool__surface {
+    background: var(--il-pool-surface);
+  }
+
+  .il-ripple-pool__ripple {
+    border-color: var(--il-text, #f2f7fb);
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-ripple-pool[data-il-tier="high"] {
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-ripple-pool[data-il-tier="mid"] {
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-ripple-pool[data-il-tier="low"] {
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}

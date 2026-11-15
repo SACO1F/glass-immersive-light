@@ -1,0 +1,116 @@
+.il-rim-light {
+  --il-rim-radius: 24px;
+  --il-rim-intensity: 0.7;
+  --il-light-x: 50%;
+  --il-light-y: 0%;
+  --il-light-proximity: 0;
+
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--il-rim-radius);
+  color: var(--il-text, #f2f7fb);
+}
+
+.il-rim-light__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(
+    300px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-ambient-rgb, 143 216 255) /
+        calc(
+          var(--il-light-proximity) * 0.22 * var(--il-rim-intensity) *
+            var(--il-ambient-alpha-scale, 1)
+        )
+    ),
+    transparent 70%
+  );
+  opacity: var(--il-tier-glow-alpha, 1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.il-rim-light__rim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    160px circle at var(--il-light-x) var(--il-light-y),
+    rgb(
+      var(--il-highlight-rgb, 255 255 255) /
+        calc(
+          var(--il-light-proximity) * var(--il-rim-intensity) * 0.95 *
+            var(--il-rim-alpha-scale, 1)
+        )
+    ),
+    transparent 64%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.il-rim-light__content {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="light"] .il-rim-light__glow {
+  mix-blend-mode: normal;
+}
+
+.il-rim-light[data-il-tier="low"] .il-rim-light__glow,
+[data-tier="low"] .il-rim-light:not([data-il-tier]) .il-rim-light__glow {
+  display: none;
+}
+
+.il-rim-light[data-il-tier="low"] .il-rim-light__rim,
+[data-tier="low"] .il-rim-light:not([data-il-tier]) .il-rim-light__rim {
+  background: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-rim-light__glow {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-rim-light__glow {
+    display: none;
+  }
+
+  .il-rim-light__rim {
+    background: rgb(255 255 255 / 0.7);
+  }
+
+  [data-theme="light"] .il-rim-light__rim {
+    background: rgb(8 126 164 / 0.8);
+  }
+}
+
+/* Local tier variables keep standalone copies independent of site tokens. */
+.il-rim-light[data-il-tier="high"] {
+  --il-tier-glow-alpha: 1;
+  --il-tier-motion-scale: 1;
+}
+
+.il-rim-light[data-il-tier="mid"] {
+  --il-tier-glow-alpha: 0.7;
+  --il-tier-motion-scale: 1;
+}
+
+.il-rim-light[data-il-tier="low"] {
+  --il-tier-glow-alpha: 0.35;
+  --il-tier-motion-scale: 0;
+}
