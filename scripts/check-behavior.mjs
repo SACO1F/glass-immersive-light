@@ -409,9 +409,25 @@ async function main() {
           `${base}/components/liquid-light-pool?tier=high`,
           { waitUntil: "domcontentloaded" },
         );
-        await failurePage.waitForSelector(".il-liquid-pool__fallback", {
-          timeout: 5000,
-        });
+        // The pool renders its CSS fallback until the scoped tier resolves.
+        // Wait for the high-tier pass to finish before asserting the failure
+        // path, otherwise the initial fallback can be mistaken for the final
+        // state on slower CI runners.
+        await failurePage.waitForFunction(
+          () =>
+            document
+              .querySelector(".il-liquid-pool")
+              ?.getAttribute("data-il-tier") === "high",
+          null,
+          { timeout: 5000 },
+        );
+        await failurePage.waitForFunction(
+          () =>
+            !document.querySelector(".il-liquid-pool canvas") &&
+            Boolean(document.querySelector(".il-liquid-pool__fallback")),
+          null,
+          { timeout: 5000 },
+        );
         assert.equal(
           await failurePage.locator(".il-liquid-pool canvas").count(),
           0,
