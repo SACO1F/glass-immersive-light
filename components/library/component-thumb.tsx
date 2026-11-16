@@ -154,6 +154,21 @@ function Shape({ slug }: { slug: string }) {
           <span className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--site-accent)] shadow-[0_0_14px_var(--site-accent)]" />
         </>
       );
+    case "liquid-glass-hero":
+      return (
+        <>
+          <span
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(90deg, transparent 0 17%, color-mix(in oklab, var(--site-accent) 26%, transparent) 17% 22%, transparent 22% 31%, color-mix(in oklab, var(--site-accent-2) 24%, transparent) 31% 34%, transparent 34% 67%, color-mix(in oklab, var(--site-accent-3) 22%, transparent) 67% 72%, transparent 72%), repeating-linear-gradient(90deg, var(--site-line) 0 1px, transparent 1px 28px), repeating-linear-gradient(0deg, var(--site-line) 0 1px, transparent 0 28px)",
+              backgroundSize: "cover",
+            }}
+          />
+          <span className="absolute inset-6 rounded-2xl border border-[var(--site-line-strong)] bg-[color-mix(in_oklab,var(--site-panel)_28%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--site-accent)_20%,transparent),0_18px_34px_rgb(0_0_0/0.25)] backdrop-blur-sm" />
+          <span className="absolute left-1/2 top-1/2 h-1 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--site-text)] opacity-30" />
+        </>
+      );
     default:
       return (
         <span className="absolute inset-5 rounded-xl border border-[var(--site-line)] bg-[var(--site-text)] opacity-10" />

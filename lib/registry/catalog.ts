@@ -10,6 +10,7 @@ import { meta as refractiveCardMeta } from "@/registry/scene/refractive-card/met
 import { meta as sheenButtonMeta } from "@/registry/scene/sheen-button/meta";
 import { meta as cursorRefractionCardMeta } from "@/registry/signature/cursor-refraction-card/meta";
 import { meta as focusPulseFormMeta } from "@/registry/signature/focus-pulse-form/meta";
+import { meta as glassHeroMeta } from "@/registry/signature/liquid-glass-hero/meta";
 import { meta as liquidLightPoolMeta } from "@/registry/signature/liquid-light-pool/meta";
 import { meta as magneticSheenButtonMeta } from "@/registry/signature/magnetic-sheen-button/meta";
 import { meta as ripplePoolMeta } from "@/registry/signature/ripple-pool/meta";
@@ -35,6 +36,7 @@ const registry: ComponentMeta[] = [
   focusPulseFormMeta,
   liquidLightPoolMeta,
   ripplePoolMeta,
+  glassHeroMeta,
 ].map((meta) => componentMetaSchema.parse(meta));
 
 export function getAllComponentMeta(): ComponentMeta[] {

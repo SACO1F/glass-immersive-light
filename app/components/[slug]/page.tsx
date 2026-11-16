@@ -22,6 +22,7 @@ import { RefractiveCardDemo } from "@/registry/scene/refractive-card/demo";
 import { SheenButtonDemo } from "@/registry/scene/sheen-button/demo";
 import { CursorRefractionCardDemo } from "@/registry/signature/cursor-refraction-card/demo";
 import { FocusPulseFormDemo } from "@/registry/signature/focus-pulse-form/demo";
+import { GlassHeroDemo } from "@/registry/signature/liquid-glass-hero/demo";
 import { LiquidLightPoolDemo } from "@/registry/signature/liquid-light-pool/demo";
 import { MagneticSheenButtonDemo } from "@/registry/signature/magnetic-sheen-button/demo";
 import { RipplePoolDemo } from "@/registry/signature/ripple-pool/demo";
@@ -41,6 +42,7 @@ const demos: Record<string, ComponentType | undefined> = {
   "magnetic-sheen-button": MagneticSheenButtonDemo,
   "focus-pulse-form": FocusPulseFormDemo,
   "liquid-light-pool": LiquidLightPoolDemo,
+  "liquid-glass-hero": GlassHeroDemo,
   "ripple-pool": RipplePoolDemo,
 };
 
@@ -164,6 +166,9 @@ export default async function ComponentDetailPage({ params }: PageProps) {
           </div>
 
           <div className="detail-chips">
+            {meta.materials && meta.materials.length > 1 ? (
+              <MetaBadge label="Material" value="Dual" />
+            ) : null}
             <MetaBadge label="Fidelity" value={fidelityLabels[meta.fidelity]} />
             <MetaBadge label="GPU" value={gpuLabels[meta.gpu]} />
             <MetaBadge label="Fallback" value={meta.fallbackSummary} />
@@ -179,7 +184,10 @@ export default async function ComponentDetailPage({ params }: PageProps) {
       </header>
 
       <section className="detail-stage-wrap" aria-label="实时预览">
-        <PreviewStage title={meta.name}>
+        <PreviewStage
+          title={meta.name}
+          materials={meta.materials?.map((item) => item.id)}
+        >
           {Demo ? (
             <Demo />
           ) : (
@@ -321,6 +329,30 @@ export default async function ComponentDetailPage({ params }: PageProps) {
               </div>
             ))}
           </section>
+
+          {meta.materials?.length ? (
+            <section
+              className="detail-aside-card"
+              aria-labelledby="materials-title"
+            >
+              <h2 id="materials-title">材质支持</h2>
+              {meta.materials.map((item) => (
+                <div key={item.id} className="degradation-row">
+                  <b>
+                    {item.id === "liquid-glass"
+                      ? "Liquid glass"
+                      : "Immersive light"}
+                  </b>
+                  <p>
+                    {item.backends.join(" / ").toUpperCase()} · Fidelity{" "}
+                    {item.fidelity} · GPU {item.gpu} · Dispersion{" "}
+                    {item.dispersion}
+                  </p>
+                  <p>{item.fallback}</p>
+                </div>
+              ))}
+            </section>
+          ) : null}
 
           <section className="detail-aside-card" aria-labelledby="a11y-title">
             <h2 id="a11y-title">可访问性</h2>

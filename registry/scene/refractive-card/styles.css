@@ -297,3 +297,195 @@
     background: rgb(8 126 164 / 0.8);
   }
 }
+
+/*
+ * Liquid glass material — CSS base only.
+ *
+ * This layer provides tinted frosted glass, a Fresnel-style edge and a
+ * pointer highlight. It does not displace the page backdrop or split RGB
+ * channels; those require the WebGL backend. Keep that distinction visible
+ * in the docs and metadata rather than implying real refraction here.
+ */
+.il-refractive-card--liquid-glass {
+  --il-card-lg-tint-base: var(--il-lg-tint, rgb(255 255 255 / 0.1));
+  --il-card-lg-tint-strong: var(--il-lg-tint-strong, rgb(255 255 255 / 0.16));
+  --il-card-lg-tint: var(--il-card-lg-tint-base);
+  --il-card-lg-fresnel-rgb: var(--il-lg-fresnel-rgb, 255 255 255);
+  --il-card-lg-fresnel-alpha: var(--il-lg-fresnel-alpha, 0.55);
+  --il-card-lg-fresnel-width: var(--il-lg-fresnel-width, 1.25px);
+  --il-card-lg-shadow: var(--il-lg-shadow, rgb(0 0 0 / 0.35));
+}
+
+[data-theme="light"] .il-refractive-card--liquid-glass {
+  --il-card-lg-tint-base: var(--il-lg-tint, rgb(255 255 255 / 0.12));
+  --il-card-lg-tint-strong: var(--il-lg-tint-strong, rgb(255 255 255 / 0.18));
+  --il-card-lg-fresnel-rgb: var(--il-lg-fresnel-rgb, 54 160 190);
+  --il-card-lg-fresnel-alpha: var(--il-lg-fresnel-alpha, 0.72);
+  --il-card-lg-fresnel-width: var(--il-lg-fresnel-width, 1.5px);
+  --il-card-lg-shadow: var(--il-lg-shadow, rgb(15 32 48 / 0.14));
+}
+
+.il-refractive-card--liquid-glass.il-refractive-card--clear {
+  --il-card-lg-tint: color-mix(
+    in oklab,
+    var(--il-card-lg-tint-base) 55%,
+    transparent
+  );
+}
+
+.il-refractive-card--liquid-glass.il-refractive-card--frosted {
+  --il-card-lg-tint: var(--il-card-lg-tint-strong);
+}
+
+.il-refractive-card--liquid-glass.il-refractive-card--tinted {
+  --il-card-lg-tint: color-mix(
+    in oklab,
+    var(--il-accent, #8fd8ff) 16%,
+    var(--il-card-lg-tint-strong)
+  );
+}
+
+.il-refractive-card--liquid-glass .il-refractive-card__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background-color: var(--il-card-surface);
+  background-image: linear-gradient(
+    var(--il-card-lg-tint),
+    var(--il-card-lg-tint)
+  );
+  -webkit-backdrop-filter: blur(var(--il-card-blur, 14px)) saturate(1.15);
+  backdrop-filter: blur(var(--il-card-blur, 14px)) saturate(1.15);
+  box-shadow:
+    inset 0 0 0 1px
+      rgb(
+        var(--il-card-lg-fresnel-rgb) /
+          calc(var(--il-card-lg-fresnel-alpha) * 0.55)
+      ),
+    0 24px 70px var(--il-card-lg-shadow);
+  pointer-events: none;
+}
+
+@supports (color: color-mix(in oklab, white, black)) {
+  .il-refractive-card--liquid-glass .il-refractive-card__glass {
+    background-color: color-mix(
+      in oklab,
+      var(--il-card-surface) 22%,
+      transparent
+    );
+  }
+}
+
+.il-refractive-card--liquid-glass .il-refractive-card__fresnel {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: var(--il-card-lg-fresnel-width);
+  background:
+    radial-gradient(
+      220px circle at var(--il-light-x, 50%) var(--il-light-y, 0%),
+      rgb(
+          var(--il-card-lg-fresnel-rgb) /
+            calc(
+              var(--il-light-proximity, 0) *
+                var(--il-card-lg-fresnel-alpha)
+            )
+        ),
+      transparent 68%
+    ),
+    linear-gradient(
+      135deg,
+      rgb(
+        var(--il-card-lg-fresnel-rgb) /
+          calc(var(--il-card-lg-fresnel-alpha) * 0.22)
+      ),
+      transparent 32%,
+      transparent 68%,
+      rgb(
+        var(--il-card-lg-fresnel-rgb) /
+          calc(var(--il-card-lg-fresnel-alpha) * 0.14)
+      )
+    );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+[data-theme="light"] .il-refractive-card--liquid-glass .il-refractive-card__glass {
+  background-color: color-mix(
+    in oklab,
+    var(--il-card-surface) 8%,
+    transparent
+  );
+  box-shadow:
+    inset 0 0 0 1px
+      rgb(
+        var(--il-card-lg-fresnel-rgb) /
+          calc(var(--il-card-lg-fresnel-alpha) * 0.45)
+      ),
+    0 18px 50px var(--il-card-lg-shadow);
+}
+
+.il-refractive-card--liquid-glass[data-il-tier="low"] .il-refractive-card__glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--il-card-surface);
+  box-shadow:
+    inset 0 0 0 1px
+      rgb(
+        var(--il-card-lg-fresnel-rgb) /
+          calc(var(--il-card-lg-fresnel-alpha) * 0.4)
+      ),
+    0 18px 50px var(--il-card-lg-shadow);
+}
+
+.il-refractive-card--liquid-glass[data-il-tier="low"] .il-refractive-card__fresnel {
+  display: none;
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .il-refractive-card--liquid-glass .il-refractive-card__glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .il-refractive-card--liquid-glass .il-refractive-card__glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+  }
+
+  .il-refractive-card--liquid-glass .il-refractive-card__specular {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .il-refractive-card--liquid-glass .il-refractive-card__glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--il-card-surface);
+    box-shadow:
+      inset 0 0 0 1px
+        rgb(var(--il-card-lg-fresnel-rgb) / 0.8),
+      0 18px 50px var(--il-card-lg-shadow);
+  }
+
+  .il-refractive-card--liquid-glass .il-refractive-card__fresnel {
+    display: none;
+  }
+}

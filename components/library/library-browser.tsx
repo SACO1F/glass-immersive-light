@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import type { OpticalMaterial } from "@/lib/registry/schema";
 import { ComponentThumb } from "./component-thumb";
 
 export type LibraryItem = {
@@ -14,6 +15,7 @@ export type LibraryItem = {
   tech: string;
   fidelity: "high" | "medium" | "low";
   gpu: "low" | "medium" | "high";
+  materials: OpticalMaterial[];
 };
 
 const layerLabels = {
@@ -161,6 +163,9 @@ export function LibraryBrowser({
                 <p className="component-card__desc">{item.summary}</p>
 
                 <div className="component-card__chips">
+                  {item.materials.includes("liquid-glass") ? (
+                    <span>Liquid glass</span>
+                  ) : null}
                   <span>Fidelity {item.fidelity}</span>
                   <span>GPU {item.gpu}</span>
                   <span>{item.priority}</span>

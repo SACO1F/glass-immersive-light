@@ -38,6 +38,19 @@
   --il-rim-alpha-scale: 1;
   --il-specular-alpha-scale: 1;
 
+  /*
+   * Liquid glass material (CSS base).
+   * These tokens describe tint and Fresnel approximation only. Real
+   * refraction and chromatic dispersion require a WebGL backend and are
+   * intentionally not promised by the CSS layer.
+   */
+  --il-lg-tint: rgb(255 255 255 / 0.1);
+  --il-lg-tint-strong: rgb(255 255 255 / 0.16);
+  --il-lg-fresnel-rgb: var(--il-highlight-rgb);
+  --il-lg-fresnel-alpha: 0.55;
+  --il-lg-fresnel-width: 1.25px;
+  --il-lg-shadow: var(--il-glass-shadow);
+
   /* Radius */
   --il-radius-xs: 8px;
   --il-radius-sm: 12px;
@@ -108,6 +121,13 @@
   --il-ambient-alpha-scale: 0.8;
   --il-rim-alpha-scale: 0.75;
   --il-specular-alpha-scale: 0.5;
+
+  /* Liquid glass leans on tint and Fresnel edges instead of inner glow. */
+  --il-lg-tint: rgb(255 255 255 / 0.12);
+  --il-lg-tint-strong: rgb(255 255 255 / 0.18);
+  --il-lg-fresnel-alpha: 0.72;
+  --il-lg-fresnel-width: 1.5px;
+  --il-lg-shadow: rgb(15 32 48 / 0.14);
 }
 
 [data-tier="high"] {

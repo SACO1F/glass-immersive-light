@@ -71,9 +71,9 @@ export function Demo() {
 
 export function Demo() {
   return (
-    <RefractiveCard variant="frosted">
-      <h2>玻璃卡片</h2>
-      <p>指针靠近时出现边缘光与倾斜。</p>
+    <RefractiveCard material="liquid-glass" variant="frosted">
+      <h2>液态玻璃</h2>
+      <p>CSS 基座提供 tint、模糊与 Fresnel 边缘。</p>
     </RefractiveCard>
   );
 }`,
@@ -139,6 +139,16 @@ export function Demo() {
     <LiquidLightPool blobCount={5}>
       <p>拖拽指针吸引液态光团。</p>
     </LiquidLightPool>
+  );
+}`,
+  "liquid-glass-hero": `import { GlassHero } from "./liquid-glass-hero";
+
+export function Demo() {
+  return (
+    <GlassHero refraction={0.6} dispersion={0}>
+      <h2>光穿过介质</h2>
+      <p>组件自带场景，不采样页面 DOM。</p>
+    </GlassHero>
   );
 }`,
   "ripple-pool": `import { RipplePool } from "./ripple-pool";

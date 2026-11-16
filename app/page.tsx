@@ -47,9 +47,9 @@ const layers = [
     title: "原创特色",
     en: "Signature interactions",
     description:
-      "光标折射、液态光池、磁性高光、焦点脉冲与涟漪。光不再只是皮肤，而是交互本身的物理反馈。",
-    items: ["CursorRefractionCard", "LiquidLightPool", "MagneticSheenButton", "FocusPulseForm", "RipplePool"],
-    meta: "5 components · SVG / WebGL",
+      "光标折射、液态光池、磁性高光、焦点脉冲、涟漪与 WebGL 液态玻璃。光不再只是皮肤，而是交互本身的物理反馈。",
+    items: ["CursorRefractionCard", "LiquidLightPool", "MagneticSheenButton", "FocusPulseForm", "RipplePool", "GlassHero"],
+    meta: "6 components · CSS / SVG / WebGL",
   },
 ];
 
@@ -100,6 +100,7 @@ const marqueeItems = [
   "MagneticSheenButton",
   "FocusPulseForm",
   "RipplePool",
+  "GlassHero",
 ];
 
 export default function Home() {
@@ -123,7 +124,7 @@ export default function Home() {
 
           <div className="hero__actions">
             <Link className="btn btn--primary" href="/components">
-              浏览 15 个组件
+              浏览 16 个组件
               <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path
                   d="M3.5 8h9M8.5 4l4 4-4 4"
@@ -390,7 +391,7 @@ export default function Home() {
               许可与边界
             </Link>
             <span className="meta sm:ml-auto">
-              15 components · 3 layers · 1 contract
+              16 components · 3 layers · 1 contract
             </span>
           </div>
         </div>

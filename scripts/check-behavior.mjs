@@ -141,7 +141,7 @@ async function main() {
 
     await run("library search and layer filters", async () => {
       await open("/components");
-      assert.equal(await page.locator("[data-thumb]").count(), 15);
+      assert.equal(await page.locator("[data-thumb]").count(), 16);
 
       await page.getByPlaceholder("搜索组件名或用途").fill("Liquid");
       assert.equal(await page.locator("[data-thumb]").count(), 1);
@@ -154,7 +154,7 @@ async function main() {
       await page.getByPlaceholder("搜索组件名或用途").fill("no-such-component");
       assert.equal(await page.locator("[data-thumb]").count(), 0);
       await page.getByRole("button", { name: "清除筛选" }).click();
-      assert.equal(await page.locator("[data-thumb]").count(), 15);
+      assert.equal(await page.locator("[data-thumb]").count(), 16);
     });
 
     await run("theme and variant materials", async () => {
@@ -194,6 +194,237 @@ async function main() {
           );
         }
       }
+    });
+
+    await run("material switch keeps CSS base honest", async () => {
+      await open("/components/refractive-card?tier=mid");
+      const card = page.locator(".il-refractive-card");
+
+      assert.equal(
+        await card.getAttribute("data-il-material"),
+        "immersive-light",
+      );
+      assert.equal(await page.locator(".il-refractive-card__surface").count(), 1);
+
+      await page
+        .getByRole("button", { name: "液态玻璃", exact: true })
+        .click();
+      await page.waitForSelector(".il-refractive-card__glass", {
+        timeout: 4000,
+      });
+
+      assert.equal(
+        await card.getAttribute("data-il-material"),
+        "liquid-glass",
+      );
+      assert.equal(await card.getAttribute("data-il-backend"), "css");
+      assert.equal(await card.getAttribute("data-il-dispersion"), "off");
+      assert.equal(await page.locator(".il-refractive-card__surface").count(), 0);
+      assert.equal(
+        parseBlur(await backdropOf(".il-refractive-card__glass")),
+        10,
+      );
+
+      const tints = {};
+      for (const variant of ["clear", "frosted", "tinted"]) {
+        await page
+          .getByRole("button", { name: variant, exact: true })
+          .click();
+        await page.waitForTimeout(180);
+        tints[variant] = await card.evaluate((element) =>
+          getComputedStyle(element)
+            .getPropertyValue("--il-card-lg-tint")
+            .trim(),
+        );
+      }
+      assert.equal(
+        new Set(Object.values(tints)).size,
+        3,
+        `liquid-glass variants share the same tint: ${JSON.stringify(tints)}`,
+      );
+
+      await clickTier("T3");
+      await waitTier(".il-refractive-card", "low");
+      assert.equal(
+        parseBlur(await backdropOf(".il-refractive-card__glass")),
+        0,
+      );
+
+      await clickTier("Auto");
+      await waitTier(".il-refractive-card", "mid");
+      assert.equal(
+        parseBlur(await backdropOf(".il-refractive-card__glass")),
+        10,
+      );
+
+      await page
+        .getByRole("button", { name: "沉浸光感", exact: true })
+        .click();
+      await page.waitForSelector(".il-refractive-card__surface", {
+        timeout: 4000,
+      });
+      assert.equal(
+        await card.getAttribute("data-il-material"),
+        "immersive-light",
+      );
+    });
+
+    await run("liquid glass light mode stays legible", async () => {
+      await open("/components/refractive-card?theme=light&tier=mid");
+      await page
+        .getByRole("button", { name: "液态玻璃", exact: true })
+        .click();
+      await page.waitForSelector(".il-refractive-card__glass", {
+        timeout: 4000,
+      });
+
+      const card = page.locator(".il-refractive-card");
+      assert.equal(
+        await card.getAttribute("data-il-material"),
+        "liquid-glass",
+      );
+      assert.equal(
+        parseBlur(await backdropOf(".il-refractive-card__glass")),
+        10,
+      );
+
+      const tint = await card.evaluate((element) =>
+        getComputedStyle(element).getPropertyValue("--il-card-lg-tint").trim(),
+      );
+      assert.ok(tint.length > 0, "light liquid-glass tint is empty");
+
+      assert.equal(
+        await page
+          .locator(".il-refractive-card__content")
+          .evaluate((element) => getComputedStyle(element).color),
+        "rgb(11, 19, 26)",
+      );
+    });
+
+    await run("glass hero webgl, tier fallback, and copy", async () => {
+      await open("/components/liquid-glass-hero?theme=light&tier=high");
+      await page.waitForSelector(".il-glass-hero", { timeout: 8000 });
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-backend") === "webgl",
+        null,
+        { timeout: 8000 },
+      );
+
+      const hero = page.locator(".il-glass-hero");
+      assert.equal(
+        await hero.getAttribute("data-il-material"),
+        "liquid-glass",
+      );
+      assert.equal(await hero.getAttribute("data-il-tint"), "cool");
+      assert.equal(
+        await hero.getAttribute("data-il-webgl-status"),
+        "ready",
+      );
+      assert.equal(await hero.getAttribute("data-il-dispersion"), "off");
+      assert.equal(await page.locator(".il-glass-hero canvas").count(), 1);
+      assert.equal(
+        await page
+          .locator(".il-glass-hero canvas")
+          .evaluate((element) => getComputedStyle(element).visibility),
+        "visible",
+      );
+
+      await page
+        .getByRole("button", { name: "开启色散", exact: true })
+        .click();
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-dispersion") === "on",
+        null,
+        { timeout: 3000 },
+      );
+
+      await clickTier("T2");
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-backend") === "css",
+        null,
+        { timeout: 5000 },
+      );
+      assert.equal(
+        await hero.getAttribute("data-il-webgl-status"),
+        "idle",
+      );
+
+      await clickTier("T1");
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-backend") === "webgl",
+        null,
+        { timeout: 8000 },
+      );
+      assert.equal(await hero.getAttribute("data-il-dispersion"), "on");
+
+      await page.getByRole("button", { name: /复制全部/ }).click();
+      await page.waitForFunction(
+        () => Boolean(document.querySelector('[data-copy-state="copied"]')),
+        null,
+        { timeout: 4000 },
+      );
+      const clipboard = await page.evaluate(() =>
+        navigator.clipboard.readText(),
+      );
+      for (const file of [
+        "index.tsx",
+        "styles.css",
+        "use-optical-tier.ts",
+        "liquid-glass-runtime.ts",
+      ]) {
+        assert.ok(clipboard.includes(file), `clipboard missing ${file}`);
+      }
+    });
+
+    await run("glass hero webgl failure falls back", async () => {
+      const failureContext = await browser.newContext();
+      const failurePage = await failureContext.newPage();
+      await failurePage.addInitScript(() => {
+        const original = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+          if (type === "webgl" || type === "webgl2") return null;
+          return original.call(this, type, ...args);
+        };
+      });
+
+      await failurePage.goto(
+        `${base}/components/liquid-glass-hero?tier=high`,
+        { waitUntil: "domcontentloaded" },
+      );
+      await failurePage.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-webgl-status") === "fallback",
+        null,
+        { timeout: 8000 },
+      );
+
+      assert.equal(
+        await failurePage
+          .locator(".il-glass-hero")
+          .getAttribute("data-il-webgl-status"),
+        "fallback",
+      );
+      assert.equal(
+        await failurePage
+          .locator(".il-glass-hero__fallback-glass")
+          .count(),
+        1,
+      );
+      await failureContext.close();
     });
 
     await run("36 global/local tier combinations", async () => {

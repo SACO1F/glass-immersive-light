@@ -32,9 +32,11 @@ async function main() {
       const files = await readdir(sourceDir);
       const componentFiles = files.filter(
         (file) =>
-          file === "index.tsx" ||
-          file === "styles.css" ||
-          file === "use-optical-tier.ts",
+          file !== "meta.ts" &&
+          file !== "demo.tsx" &&
+          (file.endsWith(".tsx") ||
+            file.endsWith(".ts") ||
+            file.endsWith(".css")),
       );
 
       for (const file of componentFiles) {

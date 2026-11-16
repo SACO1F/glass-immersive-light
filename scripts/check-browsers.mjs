@@ -74,7 +74,19 @@ async function main() {
 
       page.on("pageerror", (error) => errors.push(error.message));
       page.on("console", (message) => {
-        if (message.type() === "error") errors.push(message.text());
+        if (message.type() !== "error") return;
+
+        // Next logs this when a prefetch is aborted by a full-page navigation
+        // in the test. It then falls back to browser navigation successfully.
+        const text = message.text();
+        if (
+          text.includes("Failed to fetch RSC payload") &&
+          text.includes("Falling back to browser navigation")
+        ) {
+          return;
+        }
+
+        errors.push(text);
       });
 
       await run(`${engine.name}: routes and hydration`, async () => {
@@ -85,7 +97,7 @@ async function main() {
           waitUntil: "networkidle",
         });
         await page.waitForSelector("[data-thumb]", { timeout: 8000 });
-        assert.equal(await page.locator("[data-thumb]").count(), 15);
+        assert.equal(await page.locator("[data-thumb]").count(), 16);
 
         await page.goto(`${base}/components/refractive-card`, {
           waitUntil: "networkidle",
@@ -125,6 +137,44 @@ async function main() {
         assert.equal(blur, 10);
       });
 
+      await run(`${engine.name}: liquid glass CSS base`, async () => {
+        await page.goto(`${base}/components/refractive-card?tier=mid`, {
+          waitUntil: "networkidle",
+        });
+        await page.waitForSelector(".il-refractive-card", { timeout: 8000 });
+
+        await page
+          .getByRole("button", { name: "液态玻璃", exact: true })
+          .click();
+        await page.waitForSelector(".il-refractive-card__glass", {
+          timeout: 4000,
+        });
+
+        assert.equal(
+          await page
+            .locator(".il-refractive-card")
+            .getAttribute("data-il-material"),
+          "liquid-glass",
+        );
+        assert.equal(
+          await page.locator(".il-refractive-card__surface").count(),
+          0,
+        );
+
+        const supported = await page.evaluate(() =>
+          CSS.supports("backdrop-filter", "blur(1px)"),
+        );
+
+        if (!supported) return;
+
+        const blur = parseBlur(
+          await page
+            .locator(".il-refractive-card__glass")
+            .evaluate((element) => getComputedStyle(element).backdropFilter),
+        );
+        assert.equal(blur, 10);
+      });
+
       await run(`${engine.name}: light variant materials`, async () => {
         await page.goto(`${base}/components/refractive-card?theme=light`, {
           waitUntil: "networkidle",
@@ -148,6 +198,48 @@ async function main() {
         }
 
         assert.equal(new Set(Object.values(tints)).size, 3);
+      });
+
+      await run(`${engine.name}: glass hero CSS fallback`, async () => {
+        await page.goto(
+          `${base}/components/liquid-glass-hero?theme=light&tier=mid`,
+          {
+            waitUntil: "networkidle",
+          },
+        );
+        await page.waitForSelector(".il-glass-hero", { timeout: 8000 });
+        await page.waitForFunction(
+          () =>
+            document
+              .querySelector(".il-glass-hero")
+              ?.getAttribute("data-il-backend") === "css",
+          null,
+          { timeout: 5000 },
+        );
+
+        assert.equal(
+          await page
+            .locator(".il-glass-hero")
+            .getAttribute("data-il-tint"),
+          "cool",
+        );
+        assert.equal(
+          await page.locator(".il-glass-hero__fallback-glass").count(),
+          1,
+        );
+
+        const supported = await page.evaluate(() =>
+          CSS.supports("backdrop-filter", "blur(1px)"),
+        );
+
+        if (!supported) return;
+
+        const blur = parseBlur(
+          await page
+            .locator(".il-glass-hero__fallback-glass")
+            .evaluate((element) => getComputedStyle(element).backdropFilter),
+        );
+        assert.equal(blur, 10);
       });
 
       await run(`${engine.name}: modal opens and caps blur`, async () => {

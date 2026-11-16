@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "文档",
   description:
-    "ImmersiveLight 的快速开始、主题变量、设备分级和可访问性约定。",
+    "ImmersiveLight 的快速开始、双材质、主题变量、设备分级和可访问性约定。",
   path: "/docs",
 });
 
@@ -35,6 +35,10 @@ const themeSnippet = `:root {
   --il-accent: #087ea4;
 }`;
 
+const materialSnippet = `<RefractiveCard material="liquid-glass" variant="frosted">
+  <p>液态玻璃的 CSS 基座。</p>
+</RefractiveCard>`;
+
 const tierSnippet = `<!-- 最近的 data-tier 作用域 -->
 <div data-tier="low">
   <RefractiveCard>...</RefractiveCard>
@@ -49,6 +53,7 @@ const tierSnippet = `<!-- 最近的 data-tier 作用域 -->
 const sections = [
   ["快速开始", "#start"],
   ["复制全部", "#copy"],
+  ["双材质", "#material"],
   ["主题变量", "#theme"],
   ["设备分级", "#tiers"],
   ["可访问性", "#a11y"],
@@ -63,15 +68,15 @@ export default function DocsPage() {
             <h1 className="page-head__title">
               复制、主题
               <br />
-              与设备分级
+              材质与设备分级
             </h1>
             <p className="lede mt-5 max-w-2xl">
               ImmersiveLight 不使用 npm 包分发组件。每个组件页都提供完整源码，
-              复制到项目即可；主题、档位探测与降级策略都在源码内。
+              复制到项目即可；主题、材质、档位探测与降级策略都在源码内。
             </p>
           </div>
           <p className="page-head__meta">
-            DOCS · 05 SECTIONS
+            DOCS · 06 SECTIONS
             <br />
             <span className="text-[var(--site-subtle)]">Updated 2026-11</span>
           </p>
@@ -108,10 +113,54 @@ export default function DocsPage() {
               复制全部会把 TSX、CSS 与档位运行时用文件头分隔后合并；
               实际接入时请拆回同目录的三个文件，否则
               <code>./use-optical-tier</code> 的导入会失效。
+              GlassHero 额外包含 <code>liquid-glass-runtime.ts</code>，共四个文件。
             </p>
             <p>
-              目前 15 个组件均通过空项目 TypeScript 夹具检查，
+              目前 16 个组件均通过空项目 TypeScript 夹具检查，
               确保没有内部路径别名和缺失类型。
+            </p>
+          </section>
+
+          <section id="material" className="doc-section scroll-mt-28">
+            <h2>双材质</h2>
+            <p>
+              沉浸光感是“光落在表面”，液态玻璃是“光穿过介质”。
+              <code>material</code> 不是主题，也不是皮肤切换：它改变
+              图层结构与渲染后端，<code>theme</code> 仍只控制深浅色，
+              <code>tier</code> 仍控制档位。
+            </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <div className="tier-card">
+                <b>IMMERSIVE LIGHT</b>
+                <p className="font-medium text-[var(--site-text)]">
+                  光落在表面
+                </p>
+                <p>
+                  环境光、边缘高光、内阴影与指针高光。默认材质，
+                  保持现有组件行为。
+                </p>
+              </div>
+              <div className="tier-card">
+                <b>LIQUID GLASS</b>
+                <p className="font-medium text-[var(--site-text)]">
+                  光穿过介质
+                </p>
+                <p>
+                  当前为 CSS 基座：tint、背景模糊与 Fresnel 近似描边。
+                  没有真实背景位移或色散。
+                </p>
+              </div>
+            </div>
+            <pre>
+              <code>{materialSnippet}</code>
+            </pre>
+            <p>
+              <code>material=&quot;auto&quot;</code> 会读取最近祖先的
+              <code>data-il-material</code> 作用域；没有作用域时使用
+              immersive-light。CSS 基座诚实地只提供 frosted glass；
+              GlassHero 的 WebGL 后端对组件自带场景做折射与色散，
+              仍然不采样页面 DOM。浅色模式使用 cool tinted glass 与
+              Fresnel 边缘，不依赖内部加亮。
             </p>
           </section>
 

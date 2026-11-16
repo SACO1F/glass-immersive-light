@@ -2,7 +2,11 @@
 
 import { forwardRef, useCallback, useEffect, useRef } from "react";
 import "./styles.css";
-import { useOpticalTier } from "./use-optical-tier";
+import {
+  useOpticalMaterial,
+  useOpticalTier,
+  type OpticalMaterialPreference,
+} from "./use-optical-tier";
 
 export type RefractiveCardTier = "auto" | "high" | "mid" | "low";
 
@@ -11,6 +15,7 @@ export type RefractiveCardVariant = "clear" | "frosted" | "tinted";
 export interface RefractiveCardProps
   extends React.HTMLAttributes<HTMLDivElement> {
   tier?: RefractiveCardTier;
+  material?: OpticalMaterialPreference;
   intensity?: number;
   blur?: number;
   tilt?: boolean;
@@ -154,6 +159,7 @@ export const RefractiveCard = forwardRef<
 >(function RefractiveCard(
   {
     tier = "auto",
+    material: materialPreference = "auto",
     intensity = 0.6,
     blur = 14,
     tilt = true,
@@ -250,9 +256,17 @@ export const RefractiveCard = forwardRef<
   };
 
   const Component = as;
+  const resolvedTier = useOpticalTier(cardRef, tier);
+  const resolvedMaterial = useOpticalMaterial(
+    cardRef,
+    materialPreference,
+    "immersive-light",
+  );
+  const isLiquidGlass = resolvedMaterial === "liquid-glass";
   const classes = [
     "il-refractive-card",
     `il-refractive-card--${variant}`,
+    isLiquidGlass ? "il-refractive-card--liquid-glass" : "",
     className,
   ]
     .filter(Boolean)
@@ -264,8 +278,6 @@ export const RefractiveCard = forwardRef<
     ...(style as CardStyle),
   };
 
-  const resolvedTier = useOpticalTier(cardRef, tier);
-
   return (
     <Component
       {...rest}
@@ -274,14 +286,25 @@ export const RefractiveCard = forwardRef<
       style={mergedStyle}
       data-il-component="refractive-card"
       data-il-tier={resolvedTier}
+      data-il-material={resolvedMaterial}
+      data-il-backend="css"
+      data-il-dispersion="off"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
-      <span className="il-refractive-card__surface" aria-hidden="true">
-        <span className="il-refractive-card__ambient" />
-        <span className="il-refractive-card__specular" />
-        <span className="il-refractive-card__rim" />
-      </span>
+      {isLiquidGlass ? (
+        <>
+          <span className="il-refractive-card__glass" aria-hidden="true" />
+          <span className="il-refractive-card__fresnel" aria-hidden="true" />
+          <span className="il-refractive-card__specular" aria-hidden="true" />
+        </>
+      ) : (
+        <span className="il-refractive-card__surface" aria-hidden="true">
+          <span className="il-refractive-card__ambient" />
+          <span className="il-refractive-card__specular" />
+          <span className="il-refractive-card__rim" />
+        </span>
+      )}
       <div className="il-refractive-card__content">{children}</div>
     </Component>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { OpticalTier } from "@/lib/tier/types";
+import type { OpticalMaterial } from "@/lib/registry/schema";
 
 type PreviewTier = "auto" | OpticalTier;
 type PreviewBackground = "dark" | "light" | "checker";
@@ -29,11 +30,33 @@ const backgroundOptions: Array<{
 type PreviewStageProps = {
   children: React.ReactNode;
   title?: string;
+  materials?: OpticalMaterial[];
 };
 
-export function PreviewStage({ children, title }: PreviewStageProps) {
+const defaultMaterials: OpticalMaterial[] = ["immersive-light"];
+
+const materialLabels: Record<OpticalMaterial, string> = {
+  "immersive-light": "沉浸光感",
+  "liquid-glass": "液态玻璃",
+};
+
+export function PreviewStage({
+  children,
+  title,
+  materials = defaultMaterials,
+}: PreviewStageProps) {
+  const availableMaterials = materials.length ? materials : defaultMaterials;
   const [tier, setTier] = useState<PreviewTier>("auto");
   const [background, setBackground] = useState<PreviewBackground>("dark");
+  const [material, setMaterial] = useState<OpticalMaterial>(
+    availableMaterials[0],
+  );
+
+  useEffect(() => {
+    if (!availableMaterials.includes(material)) {
+      setMaterial(availableMaterials[0]);
+    }
+  }, [availableMaterials, material]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -89,6 +112,25 @@ export function PreviewStage({ children, title }: PreviewStageProps) {
           </div>
         </div>
 
+        {availableMaterials.length > 1 ? (
+          <div className="stage__group">
+            <span className="stage__label">材质</span>
+            <div role="group" aria-label="材质模拟">
+              {availableMaterials.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={material === option}
+                  onClick={() => setMaterial(option)}
+                  className="stage__option"
+                >
+                  {materialLabels[option]}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         <div className="stage__group">
           <span className="stage__label">档位</span>
           <div role="group" aria-label="设备档位模拟">
@@ -110,6 +152,7 @@ export function PreviewStage({ children, title }: PreviewStageProps) {
 
       <div
         data-tier={tier === "auto" ? undefined : tier}
+        data-il-material={material}
         role="region"
         aria-label={title ? `${title} 实时预览` : "组件实时预览"}
         className={[

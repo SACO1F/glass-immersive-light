@@ -110,7 +110,7 @@ export default function OpengraphImage() {
               </div>
             ))}
           </div>
-          <div style={{ display: "flex" }}>15 components · T1–T3 fallback</div>
+          <div style={{ display: "flex" }}>16 components · T1–T3 fallback</div>
         </div>
       </div>
     ),

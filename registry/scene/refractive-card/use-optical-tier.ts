@@ -148,3 +148,60 @@ export function useOpticalTier<T extends Element>(
 
   return tier;
 }
+
+export type OpticalMaterial = "immersive-light" | "liquid-glass";
+export type OpticalMaterialPreference = OpticalMaterial | "auto";
+
+export function readScopedMaterial(
+  element: Element | null,
+): OpticalMaterial | null {
+  // The component writes data-il-material on its own root, so only ancestors
+  // are valid input scopes. Reading self would freeze the resolved value.
+  const value = element?.parentElement?.closest("[data-il-material]")
+    ?.getAttribute("data-il-material");
+
+  return value === "immersive-light" || value === "liquid-glass"
+    ? value
+    : null;
+}
+
+/**
+ * Resolve the optical material without changing layout or tier semantics.
+ * Explicit prop wins, then the nearest ancestor scope, then the fallback.
+ */
+export function useOpticalMaterial<T extends Element>(
+  ref: React.RefObject<T | null>,
+  preference: OpticalMaterialPreference = "auto",
+  fallback: OpticalMaterial = "immersive-light",
+): OpticalMaterial {
+  const [material, setMaterial] = useState<OpticalMaterial>(
+    preference === "auto" ? fallback : preference,
+  );
+
+  useEffect(() => {
+    if (preference !== "auto") {
+      setMaterial(preference);
+      return;
+    }
+
+    const element = ref.current;
+    if (!element) return;
+
+    const update = () => {
+      setMaterial(readScopedMaterial(element) ?? fallback);
+    };
+
+    update();
+
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ["data-il-material"],
+    });
+
+    return () => observer.disconnect();
+  }, [fallback, preference, ref]);
+
+  return material;
+}

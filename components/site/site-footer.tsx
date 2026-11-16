@@ -36,7 +36,7 @@ export function SiteFooter() {
           <div className="site-footer__col">
             <h3>组件代码</h3>
             <Link href="/legal#license">MIT License</Link>
-            <p>15 个组件</p>
+            <p>16 个组件</p>
             <p>T1 / T2 / T3</p>
           </div>
         </div>

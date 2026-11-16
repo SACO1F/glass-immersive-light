@@ -10,8 +10,8 @@ export const meta = {
   gpu: "medium",
   priority: "P0",
   summary:
-    "用背景模糊、边缘高光、内阴影和指针高光叠出玻璃厚度，并内置 T1/T2/T3 降级。",
-  fallbackSummary: "blur-only / opaque surface",
+    "用背景模糊、边缘高光、内阴影和指针高光叠出玻璃厚度，并内置 T1/T2/T3 降级。同时提供液态玻璃材质的 CSS 基座。",
+  fallbackSummary: "CSS tint / opaque surface",
   dependencies: [],
   files: ["index.tsx", "styles.css", "use-optical-tier.ts"],
   tier: {
@@ -25,6 +25,13 @@ export const meta = {
       default: '"auto"',
       description:
         "覆盖设备档位。auto 继承最近的 data-tier 属性或全局 TierProvider。",
+    },
+    {
+      name: "material",
+      type: '"auto" | "immersive-light" | "liquid-glass"',
+      default: '"auto"',
+      description:
+        "材质选择。auto 读取最近祖先的 data-il-material 作用域，没有作用域时使用沉浸光感。",
     },
     {
       name: "intensity",
@@ -85,6 +92,18 @@ export const meta = {
       description: "降级与底色使用的表面颜色。",
     },
     {
+      name: "--il-card-lg-tint",
+      default: "theme-derived",
+      description:
+        "liquid-glass 材质的 tint 层；clear / frosted / tinted 会覆盖为不同透明度。",
+    },
+    {
+      name: "--il-lg-fresnel-alpha",
+      default: "0.55 / 0.72 (light)",
+      description:
+        "Fresnel 近似边缘强度。浅色模式默认更高，用来维持玻璃轮廓。",
+    },
+    {
       name: "--il-card-text",
       default: "#f2f7fb",
       description: "内容文字颜色。",
@@ -113,9 +132,29 @@ export const meta = {
     "触摸设备禁用倾斜与指针高光，内容不依赖 hover 才能读取。",
     "尊重 prefers-reduced-motion 与 prefers-reduced-transparency。",
     "浅色背景下默认 frosted 变体仍使用深色表面；若要改成浅色玻璃，需要同时覆盖 --il-card-surface / --il-card-text 并重新校验对比度。",
+    "liquid-glass 的浅色模式更透明；放置文字时需要在实际背景上检查对比度，不能只依赖 Fresnel 边缘。",
   ],
   browserNotes: [
     "Safari 需要 -webkit-backdrop-filter；不支持时自动回退到不透明表面。",
     "祖先元素上的 filter 或 opacity 可能影响 backdrop-filter 采样，避免嵌套玻璃容器。",
+    "liquid-glass 的 CSS 基座只有 blur、tint 与 Fresnel 近似描边，没有真实背景位移或色散。",
+  ],
+  materials: [
+    {
+      id: "immersive-light",
+      backends: ["css"],
+      fidelity: "medium",
+      gpu: "medium",
+      dispersion: "off",
+      fallback: "blur-only / opaque surface",
+    },
+    {
+      id: "liquid-glass",
+      backends: ["css"],
+      fidelity: "low",
+      gpu: "low",
+      dispersion: "off",
+      fallback: "tinted glass / opaque surface (no real refraction)",
+    },
   ],
 } satisfies ComponentMeta;

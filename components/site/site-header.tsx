@@ -110,7 +110,7 @@ export function SiteHeader() {
           <div className="site-actions">
             <span className="site-status">
               <span className="site-status__dot" aria-hidden="true" />
-              15 components
+              16 components
             </span>
             <ThemeToggle />
             <Link className="btn btn--sm btn--header" href="/docs">
