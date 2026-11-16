@@ -192,8 +192,8 @@ export function GlassHero({
       theme,
       radius,
       ...optionsRef.current,
-      tint: theme === "light" ? [0.72, 0.9, 0.95] : [0.14, 0.2, 0.28],
-      tintStrength: theme === "light" ? 0.12 : 0.05,
+      tint: theme === "light" ? [0.72, 0.9, 0.95] : [0.12, 0.48, 0.58],
+      tintStrength: theme === "light" ? 0.12 : 0.08,
       fresnelColor: theme === "light" ? [0.21, 0.63, 0.75] : [0.72, 0.95, 1],
       onFallback: (reason) => {
         setResolvedBackend("css");
@@ -285,7 +285,7 @@ export function GlassHero({
       data-il-component="liquid-glass-hero"
       data-il-material={material}
       data-il-backend={resolvedBackend}
-      data-il-tint={theme === "light" ? "cool" : "neutral"}
+      data-il-tint={theme === "light" ? "cool" : "deep-cool"}
       data-il-dispersion={
         resolvedBackend === "webgl" && dispersion > 0 ? "on" : "off"
       }

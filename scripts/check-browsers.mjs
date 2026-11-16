@@ -240,6 +240,31 @@ async function main() {
             .evaluate((element) => getComputedStyle(element).backdropFilter),
         );
         assert.equal(blur, 10);
+
+        await page.goto(
+          `${base}/components/liquid-glass-hero?theme=dark&tier=mid`,
+          { waitUntil: "networkidle" },
+        );
+        await page.waitForSelector(".il-glass-hero", { timeout: 8000 });
+        await page.waitForFunction(
+          () =>
+            document
+              .querySelector(".il-glass-hero")
+              ?.getAttribute("data-il-backend") === "css",
+          null,
+          { timeout: 5000 },
+        );
+
+        assert.equal(
+          await page
+            .locator(".il-glass-hero")
+            .getAttribute("data-il-tint"),
+          "deep-cool",
+        );
+        assert.equal(
+          await page.locator(".il-glass-hero__fallback-glass").count(),
+          1,
+        );
       });
 
       await run(`${engine.name}: modal opens and caps blur`, async () => {

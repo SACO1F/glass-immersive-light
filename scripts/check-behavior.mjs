@@ -388,6 +388,41 @@ async function main() {
       }
     });
 
+    await run("glass hero dark tinted glass", async () => {
+      await open("/components/liquid-glass-hero?theme=dark&tier=high");
+      await page.waitForSelector(".il-glass-hero", { timeout: 8000 });
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-backend") === "webgl",
+        null,
+        { timeout: 8000 },
+      );
+
+      const hero = page.locator(".il-glass-hero");
+      assert.equal(await hero.getAttribute("data-il-tint"), "deep-cool");
+      const tint = await hero.evaluate((element) =>
+        getComputedStyle(element).getPropertyValue("--il-hero-tint").trim(),
+      );
+      assert.ok(tint.length > 0, "dark tinted glass tint is empty");
+
+      await clickTier("T2");
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector(".il-glass-hero")
+            ?.getAttribute("data-il-backend") === "css",
+        null,
+        { timeout: 5000 },
+      );
+      assert.equal(await hero.getAttribute("data-il-tint"), "deep-cool");
+      assert.equal(
+        await page.locator(".il-glass-hero__fallback-glass").count(),
+        1,
+      );
+    });
+
     await run("glass hero webgl failure falls back", async () => {
       const failureContext = await browser.newContext();
       const failurePage = await failureContext.newPage();

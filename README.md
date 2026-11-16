@@ -62,7 +62,7 @@ npm run test:browsers # Firefox / WebKit 跨引擎冒烟
 
 `material` 与 `theme`、`tier` 正交：`theme` 控制深浅色，`tier` 控制质量与降级，`material` 控制物理机制与图层结构。默认材质仍是 `immersive-light`，不改变已有组件行为。
 
-目前 `RefractiveCard` 已支持 `material="liquid-glass"` 的 CSS 基座；`GlassHero` 提供 WebGL2/WebGL1 后端，对组件自带场景做折射与可选色散。CSS 基座没有真实背景位移或色散，WebGL 也不采样页面 DOM。浅色模式下 GlassHero 使用 cool tinted glass 与 Fresnel 边缘，不依赖内部加亮。材质解析在 `use-optical-tier.ts` 中。
+目前 `RefractiveCard` 已支持 `material="liquid-glass"` 的 CSS 基座；`GlassHero` 提供 WebGL2/WebGL1 后端，对组件自带场景做折射与可选色散。CSS 基座没有真实背景位移或色散，WebGL 也不采样页面 DOM。深色与浅色模式都使用 cool tinted glass：深色为 cyan/indigo，浅色为 pale cyan/lavender，不依赖内部加亮。材质解析在 `use-optical-tier.ts` 中。
 
 ## 档位契约
 
@@ -92,7 +92,7 @@ npm run test:browsers # Firefox / WebKit 跨引擎冒烟
 - 空项目 TypeScript 编译夹具
 - WebGL 上下文、着色器、链接与 context lost 回退
 - `liquid-glass` CSS 基座的材质切换、深浅色与档位上限（Firefox / WebKit 无头覆盖）
-- GlassHero：WebGL2、WebGL1、CSS 回退与色散开关（Chromium 无头）
+- GlassHero：WebGL2、WebGL1、CSS 回退、深浅色 tinted glass 与色散开关（Chromium 无头）
 
 尚未验证：
 
@@ -141,8 +141,8 @@ npm run test:browsers # Firefox / WebKit 跨引擎冒烟
 
 | 环境 | 状态 |
 | --- | --- |
-| Edge / Chromium 桌面 | 已验证（无头，行为回归 15/15） |
-| Chrome 桌面 | 已验证（无头，行为回归 15/15） |
+| Edge / Chromium 桌面 | 已验证（无头，行为回归 16/16） |
+| Chrome 桌面 | 已验证（无头，行为回归 16/16） |
 | Firefox 159 | 已验证（无头，跨引擎冒烟 7/7） |
 | WebKit 27.2（Playwright 构建） | 已验证（无头，跨引擎冒烟 7/7；非 Safari 真机） |
 | 移动 390×844 模拟 | 已验证（模拟，非真机） |
@@ -156,8 +156,8 @@ npm run test:browsers # Firefox / WebKit 跨引擎冒烟
 - 所有玻璃组件的 T2 backdrop blur 不得超过 10px。
 - 指针光效、视差、磁性位移必须响应 `prefers-reduced-motion` 的运行中切换。
 - 提交前运行 `npm run typecheck && npm run lint && npm run check:copy && npm run build`。
-- 行为回归使用 `npm run test:behavior`，会构建并启动生产服务器，覆盖复制文件集合、搜索筛选、深浅变体、材质切换、液态玻璃浅色模式、GlassHero WebGL/失败回退/复制、36 组档位、Reduce 切换、弹窗与 WebGL 故障。CI 使用 `BEHAVIOR_SKIP_BUILD=1` 复用已构建产物。
-- 跨引擎冒烟使用 `npm run test:browsers`，需要先安装 Playwright 的 Firefox / WebKit 浏览器；检查路由、React 挂载、中档模糊、液态玻璃 CSS 基座、GlassHero CSS 回退、浅色变体与弹窗。
+- 行为回归使用 `npm run test:behavior`，会构建并启动生产服务器，覆盖复制文件集合、搜索筛选、深浅变体、材质切换、液态玻璃深浅色模式、GlassHero WebGL/深色 tint/失败回退/复制、36 组档位、Reduce 切换、弹窗与 WebGL 故障。CI 使用 `BEHAVIOR_SKIP_BUILD=1` 复用已构建产物。
+- 跨引擎冒烟使用 `npm run test:browsers`，需要先安装 Playwright 的 Firefox / WebKit 浏览器；检查路由、React 挂载、中档模糊、液态玻璃 CSS 基座、GlassHero 深浅色 CSS 回退、浅色变体与弹窗。
 - 发布前按“已验证范围”更新文档，不把模拟结果写成真机结论。
 
 ## 相关页面

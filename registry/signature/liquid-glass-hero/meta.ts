@@ -10,7 +10,7 @@ export const meta = {
   gpu: "high",
   priority: "P1",
   summary:
-    "用组件自带场景做 WebGL 折射、Fresnel 边缘与可选色散；浅色模式使用 cool tinted glass，CSS 基座保持可用，不采样页面 DOM。",
+    "用组件自带场景做 WebGL 折射、Fresnel 边缘与可选色散；深色与浅色模式都使用 cool tinted glass，CSS 基座保持可用，不采样页面 DOM。",
   fallbackSummary: "CSS tint + Fresnel",
   dependencies: [],
   files: [
@@ -111,13 +111,25 @@ export const meta = {
       name: "--il-hero-tint",
       default: "theme-derived",
       description:
-        "CSS 基座 tint；浅色模式使用 cool cyan tint，不依赖内部加亮。",
+        "CSS 基座 tint；深色为 cool cyan，浅色为 pale cyan，不依赖内部加亮。",
     },
     {
       name: "--il-hero-tint-2",
       default: "theme-derived",
       description:
-        "浅色模式第二个 tint 停靠点，与 --il-hero-tint 组成斜向 tinted glass。",
+        "第二个 tint 停靠点；深色为 indigo，浅色为 lavender，与 --il-hero-tint 组成斜向 tinted glass。",
+    },
+    {
+      name: "--il-lg-tint-cool",
+      default: "theme-derived",
+      description:
+        "液态玻璃 cool tint 停靠点；深色 cyan、浅色 pale cyan。",
+    },
+    {
+      name: "--il-lg-tint-violet",
+      default: "theme-derived",
+      description:
+        "液态玻璃 indigo/lavender tint 停靠点，与 --il-lg-tint-cool 配合。",
     },
     {
       name: "--il-lg-fresnel-alpha",
@@ -151,6 +163,7 @@ export const meta = {
     "尊重 prefers-reduced-transparency：强制 CSS 不透明基座。",
     "prefers-contrast: more 下隐藏场景并使用实色表面。",
     "浅色模式使用 cool cyan tint 与 Fresnel 边缘维持玻璃感，不使用内部加亮光晕。",
+    "深色模式使用 cool cyan + indigo tint，避免只靠白色高光维持玻璃感。",
     "焦点元素位于内容层，焦点环不被 canvas 裁剪。",
     "场景为装饰性纹理；需要语义时请通过 children 提供文本。",
   ],

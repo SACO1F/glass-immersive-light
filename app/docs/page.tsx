@@ -159,8 +159,8 @@ export default function DocsPage() {
               <code>data-il-material</code> 作用域；没有作用域时使用
               immersive-light。CSS 基座诚实地只提供 frosted glass；
               GlassHero 的 WebGL 后端对组件自带场景做折射与色散，
-              仍然不采样页面 DOM。浅色模式使用 cool tinted glass 与
-              Fresnel 边缘，不依赖内部加亮。
+              仍然不采样页面 DOM。深色与浅色模式都使用 cool tinted glass：
+              深色为 cyan/indigo，浅色为 pale cyan/lavender，不依赖内部加亮。
             </p>
           </section>
 
