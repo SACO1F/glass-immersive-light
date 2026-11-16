@@ -127,8 +127,8 @@
   /* Liquid glass leans on tint and Fresnel edges instead of inner glow. */
   --il-lg-tint: rgb(255 255 255 / 0.12);
   --il-lg-tint-strong: rgb(255 255 255 / 0.18);
-  --il-lg-tint-cool: rgb(214 242 248 / 0.22);
-  --il-lg-tint-violet: rgb(236 238 255 / 0.14);
+  --il-lg-tint-cool: rgb(186 235 244 / 0.28);
+  --il-lg-tint-violet: rgb(224 230 255 / 0.18);
   --il-lg-fresnel-alpha: 0.72;
   --il-lg-fresnel-width: 1.5px;
   --il-lg-shadow: rgb(15 32 48 / 0.14);

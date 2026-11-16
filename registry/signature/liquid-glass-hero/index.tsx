@@ -192,8 +192,8 @@ export function GlassHero({
       theme,
       radius,
       ...optionsRef.current,
-      tint: theme === "light" ? [0.72, 0.9, 0.95] : [0.12, 0.48, 0.58],
-      tintStrength: theme === "light" ? 0.12 : 0.08,
+      tint: theme === "light" ? [0.62, 0.88, 0.94] : [0.12, 0.48, 0.58],
+      tintStrength: theme === "light" ? 0.16 : 0.08,
       fresnelColor: theme === "light" ? [0.21, 0.63, 0.75] : [0.72, 0.95, 1],
       onFallback: (reason) => {
         setResolvedBackend("css");
